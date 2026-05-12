@@ -122,7 +122,7 @@ function updateHeader() {
         `;
     } else {
         headerButtons.innerHTML = `
-            <a href="/profile" class="btn btn-secondary">Profile</a>
+            <a href="profile.html" class="btn btn-secondary">Profile</a>
             <button class="btn btn-secondary" onclick="openLoginModal()">Log In</button>
             <button class="btn btn-primary" onclick="openSignupModal()">Sign Up</button>
         `;
@@ -131,7 +131,7 @@ function updateHeader() {
 
 // Go to profile page
 function goToProfile() {
-    window.location.href = '/profile';
+    window.location.href = 'profile.html';
 }
 
 // Logout user
