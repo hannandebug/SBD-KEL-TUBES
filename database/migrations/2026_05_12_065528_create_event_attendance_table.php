@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('event_attendance', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id_member');
+            $table->bigInteger('id_event');
+            $table->string('rsvps_status')->nullable();
+            $table->timestamp('attended_at')->nullable();
             $table->timestamps();
+            $table->primary(['id_member', 'id_event']);
+            $table->foreign('id_member')->references('id_member')->on('users')->onDelete('cascade');
+            $table->foreign('id_event')->references('id_event')->on('event_list')->onDelete('cascade');
         });
     }
 

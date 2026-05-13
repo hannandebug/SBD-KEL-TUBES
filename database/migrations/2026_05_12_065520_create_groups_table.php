@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('group_list', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id_group')->primary();
+            $table->string('group_name')->nullable();
+            $table->longText('group_description')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->boolean('is_newgroup')->default(false);
+            $table->integer('member_count')->nullable();
+            $table->string('group_photo')->nullable();
+            $table->float('average_rating')->nullable();
+            $table->string('category')->nullable();
             $table->timestamps();
         });
     }

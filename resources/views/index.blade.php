@@ -40,56 +40,33 @@
     
     <!-- Main Content -->
     <div class="container">
-        <!-- Featured Groups Section -->
+    <!-- Featured Groups Section -->
         <section class="section" id="groups">
             <div class="section-header">
                 <h2 class="section-title">Featured Groups</h2>
                 <p class="section-subtitle">Meet people interested in what you love</p>
             </div>
             <div class="grid">
-                <!-- Group Card 1 -->
+                @forelse($featuredGroups as $group)
                 <div class="card">
-                    <div class="card-image">🚀</div>
+                    <div class="card-image" style="background-size: cover; background-position: center; background-image: url('{{ $group->photo_url }}');">
+                        @if(!$group->group_photo)
+                        {{ substr($group->group_name, 0, 1) }}
+                        @endif
+                    </div>
                     <div class="card-content">
-                        <h3 class="card-title">Tech Meetup</h3>
-                        <p class="card-subtitle">Software Development & Innovation</p>
-                        <p class="card-meta">📍 Tech City • Created 2 years ago</p>
-                        <p class="card-members">1,245 members</p>
+                        <h3 class="card-title">{{ $group->group_name }}</h3>
+                        <p class="card-subtitle">{{ $group->category ?? 'General Group' }}</p>
+                        <p class="card-meta">📍 {{ $group->city }}, {{ $group->country }}</p>
+                        <p class="card-members">{{ $group->member_count }} members • ⭐ {{ number_format($group->average_rating, 1) }}</p>
                     </div>
                 </div>
-                
-                <!-- Group Card 2 -->
-                <div class="card">
-                    <div class="card-image">🎨</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Design Collective</h3>
-                        <p class="card-subtitle">UX/UI Design & Creative Arts</p>
-                        <p class="card-meta">📍 Creative Hub • Created 1 year ago</p>
-                        <p class="card-members">856 members</p>
-                    </div>
-                </div>
-                
-                <!-- Group Card 3 -->
-                <div class="card">
-                    <div class="card-image">💼</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Entrepreneurs Network</h3>
-                        <p class="card-subtitle">Startups & Business Growth</p>
-                        <p class="card-meta">📍 Business District • Created 3 years ago</p>
-                        <p class="card-members">2,103 members</p>
-                    </div>
-                </div>
-                
-                <!-- Group Card 4 -->
-                <div class="card">
-                    <div class="card-image">🎵</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Music Lovers</h3>
-                        <p class="card-subtitle">Live Music & Concerts</p>
-                        <p class="card-meta">📍 Downtown • Created 4 years ago</p>
-                        <p class="card-members">1,567 members</p>
-                    </div>
-                </div>
+                @empty
+                <p>No groups available yet.</p>
+                @endforelse
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{{ route('groups') }}" class="btn-primary">View All Groups</a>
             </div>
         </section>
         
@@ -100,69 +77,27 @@
                 <p class="section-subtitle">Don't miss out on what's happening near you</p>
             </div>
             <div class="grid" id="eventsGrid">
-                <!-- Event Card 1 -->
-                <a href="{{ route('event.detail', ['id' => 1]) }}" style="text-decoration: none; color: inherit;">
-                    <div class="event-card" data-location="Convention Center" data-country="USA">
+                @forelse($upcomingEvents as $event)
+                <a href="{{ route('event.detail', ['id' => $event->id_event]) }}" style="text-decoration: none; color: inherit;">
+                    <div class="event-card" data-location="{{ $event->venue_name }}" data-country="{{ $event->venue_country }}" style="background-image: url('{{ $event->photo_url }}'); background-size: cover; background-position: center;">
                         <div class="event-date">
-                            <div class="event-date-day">28</div>
-                            <div class="event-date-month">Apr</div>
+                            <div class="event-date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</div>
+                            <div class="event-date-month">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</div>
                         </div>
                         <div class="event-content">
-                            <h3 class="event-title">Web Development Workshop</h3>
-                            <p class="event-group">Tech Meetup</p>
-                            <p class="event-location">📍 Convention Center</p>
-                            <p class="event-attendees">32 going · 15 interested</p>
+                            <h3 class="event-title">{{ $event->event_title }}</h3>
+                            <p class="event-group">{{ $event->group->group_name ?? 'Event' }}</p>
+                            <p class="event-location">📍 {{ $event->venue_name }}</p>
+                            <p class="event-attendees">{{ $event->total_rsvps }} going</p>
                         </div>
                     </div>
                 </a>
-                
-                <!-- Event Card 2 -->
-                <a href="{{ route('event.detail', ['id' => 2]) }}" style="text-decoration: none; color: inherit;">
-                    <div class="event-card" data-location="Creative Studio" data-country="France">
-                        <div class="event-date">
-                            <div class="event-date-day">30</div>
-                            <div class="event-date-month">Apr</div>
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title">Design Thinking Session</h3>
-                            <p class="event-group">Design Collective</p>
-                            <p class="event-location">📍 Creative Studio</p>
-                            <p class="event-attendees">18 going · 42 interested</p>
-                        </div>
-                    </div>
-                </a>
-                
-                <!-- Event Card 3 -->
-                <a href="{{ route('event.detail', ['id' => 3]) }}" style="text-decoration: none; color: inherit;">
-                    <div class="event-card" data-location="Innovation Hub" data-country="Germany">
-                        <div class="event-date">
-                            <div class="event-date-day">05</div>
-                            <div class="event-date-month">May</div>
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title">Startup Pitch Night</h3>
-                            <p class="event-group">Entrepreneurs Network</p>
-                            <p class="event-location">📍 Innovation Hub</p>
-                            <p class="event-attendees">67 going · 128 interested</p>
-                        </div>
-                    </div>
-                </a>
-                
-                <!-- Event Card 4 -->
-                <a href="{{ route('event.detail', ['id' => 4]) }}" style="text-decoration: none; color: inherit;">
-                    <div class="event-card" data-location="Blue Note Venue" data-country="Japan">
-                        <div class="event-date">
-                            <div class="event-date-day">10</div>
-                            <div class="event-date-month">May</div>
-                        </div>
-                        <div class="event-content">
-                            <h3 class="event-title">Live Jazz Night</h3>
-                            <p class="event-group">Music Lovers</p>
-                            <p class="event-location">📍 Blue Note Venue</p>
-                            <p class="event-attendees">94 going · 156 interested</p>
-                        </div>
-                    </div>
-                </a>
+                @empty
+                <p>No upcoming events at the moment.</p>
+                @endforelse
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{{ route('events') }}" class="btn-primary">View All Events</a>
             </div>
         </section>
         

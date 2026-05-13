@@ -300,37 +300,37 @@
 
         <!-- Event Header -->
         <div class="event-detail-header">
-            <div class="event-detail-hero">🚀</div>
-            <h1 class="event-detail-title">Web Development Workshop</h1>
-            <p class="event-detail-group">Hosted by Tech Meetup</p>
+            <div class="event-detail-hero" style="background-image: url('{{ $event->photo_url }}'); background-size: cover; background-position: center;"></div>
+            <h1 class="event-detail-title">{{ $event->event_title }}</h1>
+            <p class="event-detail-group">Hosted by {{ $event->group->group_name ?? 'Event' }}</p>
 
             <div class="event-detail-meta">
                 <div class="meta-item">
                     <div class="meta-icon">📅</div>
                     <div class="meta-content">
                         <div class="meta-label">Date & Time</div>
-                        <div class="meta-value">April 28, 2026 • 6:00 PM - 8:00 PM</div>
+                        <div class="meta-value">{{ \Carbon\Carbon::parse($event->event_date)->format('F d, Y') }} • {{ \Carbon\Carbon::parse($event->event_date)->format('g:i A') }}{{ $event->detail && $event->detail->event_endtime ? ' - ' . \Carbon\Carbon::parse($event->detail->event_endtime)->format('g:i A') : '' }}</div>
                     </div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-icon">📍</div>
                     <div class="meta-content">
                         <div class="meta-label">Location</div>
-                        <div class="meta-value">Convention Center, Main Hall</div>
+                        <div class="meta-value">{{ $event->detail && $event->detail->venue_address ? $event->detail->venue_address : ($event->venue_name . ', ' . $event->venue_city . ', ' . $event->venue_country) }}</div>
                     </div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-icon">👥</div>
                     <div class="meta-content">
                         <div class="meta-label">Attendees</div>
-                        <div class="meta-value">32 Going • 15 Interested</div>
+                        <div class="meta-value">{{ $event->total_rsvps }} Going</div>
                     </div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-icon">💰</div>
                     <div class="meta-content">
-                        <div class="meta-label">Price</div>
-                        <div class="meta-value">Free</div>
+                        <div class="meta-label">Event Type</div>
+                        <div class="meta-value">{{ ucfirst($event->event_type) }}</div>
                     </div>
                 </div>
             </div>
@@ -349,45 +349,8 @@
                 <div class="event-section">
                     <h2 class="section-title">About This Event</h2>
                     <p class="event-description">
-                        Join us for an exciting Web Development Workshop where you'll learn the latest techniques and 
-                        best practices in modern web development. Whether you're a beginner or an experienced developer, 
-                        this workshop offers valuable insights and hands-on experience.
+                        {{ $event->event_description }}
                     </p>
-                    <p class="event-description">
-                        During this 2-hour session, we'll cover:
-                    </p>
-                    <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
-                        <li>React 18 and advanced component patterns</li>
-                        <li>State management with Redux and Context API</li>
-                        <li>Performance optimization techniques</li>
-                        <li>Modern CSS and CSS-in-JS solutions</li>
-                        <li>Web accessibility and SEO best practices</li>
-                    </ul>
-                </div>
-
-                <!-- Agenda Section -->
-                <div class="event-section" style="margin-top: 30px;">
-                    <h2 class="section-title">Agenda</h2>
-                    <div class="agenda-item">
-                        <div class="agenda-time">6:00 PM - 6:15 PM</div>
-                        <div class="agenda-activity">Welcome & Introductions</div>
-                    </div>
-                    <div class="agenda-item">
-                        <div class="agenda-time">6:15 PM - 6:45 PM</div>
-                        <div class="agenda-activity">React Advanced Patterns Deep Dive</div>
-                    </div>
-                    <div class="agenda-item">
-                        <div class="agenda-time">6:45 PM - 7:15 PM</div>
-                        <div class="agenda-activity">Live Coding Demo & Q&A</div>
-                    </div>
-                    <div class="agenda-item">
-                        <div class="agenda-time">7:15 PM - 7:45 PM</div>
-                        <div class="agenda-activity">Workshop Hands-on Exercises</div>
-                    </div>
-                    <div class="agenda-item">
-                        <div class="agenda-time">7:45 PM - 8:00 PM</div>
-                        <div class="agenda-activity">Closing Remarks & Networking</div>
-                    </div>
                 </div>
             </div>
 

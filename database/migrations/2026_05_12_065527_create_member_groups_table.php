@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('member_group', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id_member');
+            $table->bigInteger('id_group');
+            $table->string('role')->nullable();
+            $table->timestamp('joined_at')->nullable();
             $table->timestamps();
+            $table->primary(['id_member', 'id_group']);
+            $table->foreign('id_member')->references('id_member')->on('users')->onDelete('cascade');
+            $table->foreign('id_group')->references('id_group')->on('group_list')->onDelete('cascade');
         });
     }
 

@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('group_topic', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id_group');
+            $table->bigInteger('id_topic');
             $table->timestamps();
+            $table->primary(['id_group', 'id_topic']);
+            $table->foreign('id_group')->references('id_group')->on('group_list')->onDelete('cascade');
+            $table->foreign('id_topic')->references('id_topic')->on('topic')->onDelete('cascade');
         });
     }
 

@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->bigInteger('id_member')->primary();
+            $table->string('member_name')->nullable();
+            $table->string('member_email')->nullable();
+            $table->string('member_city')->nullable();
+            $table->string('member_country')->nullable();
+            $table->integer('member_gr_count')->nullable();
+            $table->integer('member_ev_count')->nullable();
+            $table->timestamp('created_at')->nullable();
         });
     }
 

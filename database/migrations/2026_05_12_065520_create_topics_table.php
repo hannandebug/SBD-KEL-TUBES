@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('topic', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id_topic')->primary();
+            $table->string('topic_name')->nullable();
             $table->timestamps();
         });
     }
