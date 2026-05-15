@@ -44,7 +44,10 @@ class Review extends Model
     {
         return $this->belongsTo(Event::class, 'id_event', 'id_event');
     }
-
+public function member(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'id_member', 'id_member');
+}
     /**
      * Get the group being reviewed
      */

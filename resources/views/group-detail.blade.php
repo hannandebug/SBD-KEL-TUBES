@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groups - Meetup</title>
+    <title>{{ $group->group_name }} - Meetup</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="{{ asset('js/app.js') }}"></script>
@@ -282,67 +282,145 @@
             margin-left: auto;
             margin-right: 30px;
         }
-        .search-filter-container {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+
+        .group-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 40px;
         }
-        .search-box {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+        .group-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
             align-items: center;
         }
-        .search-box input {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
+        .group-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
-        .search-box button {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
+        .group-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+        .group-info p {
+            margin: 5px 0;
+            opacity: 0.95;
+        }
+        .group-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s;
+            font-size: 14px;
+            transition: all 0.3s;
         }
-        .search-box button:hover {
-            background: #764ba2;
+        .btn-primary {
+            background: white;
+            color: #667eea;
         }
-        .filter-row {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .detail-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .detail-section h2 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .topic-list {
             display: flex;
-            gap: 15px;
+            gap: 8px;
             flex-wrap: wrap;
-            align-items: center;
         }
-        .filter-group {
+        .topic-tag {
+            background: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+        .member-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+        }
+        .member-item {
+            text-align: center;
+        }
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            border-radius: 50%;
             display: flex;
-            gap: 10px;
             align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin: 0 auto 8px;
         }
-        .filter-group label {
+        .member-name {
+            font-size: 12px;
+            color: #333;
+            word-break: break-word;
+        }
+        .events-list {
+            display: grid;
+            gap: 15px;
+        }
+        .event-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .event-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .event-title {
             font-weight: 600;
             color: #333;
-            font-size: 14px;
+            margin-bottom: 5px;
         }
-        .filter-group select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            background: white;
-        }
-        .filter-group select:focus {
-            outline: none;
-            border-color: #667eea;
+        .event-date {
+            font-size: 13px;
+            color: #666;
         }
     </style>
 </head>
@@ -537,95 +615,99 @@
         }
     </script>
 
+    <!-- Group Header -->
+    <div class="group-header">
+        <div class="group-header-content">
+            <div class="group-photo" style="background-image: url('{{ $group->photo_url }}');"></div>
+            <div class="group-info">
+                <h1>{{ $group->group_name }}</h1>
+                <p><strong>{{ $group->category ?? 'General Group' }}</strong></p>
+                <p>📍 {{ $group->city }}, {{ $group->country }}</p>
+                <p>{{ $group->member_count }} members • ⭐ {{ number_format($group->average_rating, 1) }}</p>
+                @if($group->is_newgroup)
+                    <span style="display: inline-block; background: #e74c3c; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px; margin-top: 8px;">NEW GROUP</span>
+                @endif
+                <div class="group-actions">
+                    @if(Auth::check())
+                        @if($isJoined)
+                            <form method="POST" action="{{ route('group.leave', $group->id_group) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-danger">Keluar dari Grup</button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('group.join', $group->id_group) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Bergabung</button>
+                            </form>
+                        @endif
+                    @else
+                        <a href="{{ route('auth.login') }}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">Bergabung</a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="container">
-        <section class="section">
-            <div class="section-header">
-                <h1 class="section-title">Groups</h1>
-                <p class="section-subtitle">Join groups and find your community</p>
+        <!-- Messages -->
+        @if(session('success'))
+            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <!-- Description -->
+            <div class="detail-section">
+                <h2>Tentang Grup</h2>
+                <p style="color: #666; line-height: 1.6;">{{ $group->group_description }}</p>
             </div>
 
-            <!-- Search and Filter -->
-            <div class="search-filter-container">
-                <form method="GET" action="{{ route('groups') }}">
-                    <div class="search-box">
-                        <input type="text" name="search" placeholder="Cari grup..." value="{{ request('search') }}">
-                        <button type="submit">Cari</button>
-                    </div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>Kategori:</label>
-                            <select name="category" onchange="this.form.submit()">
-                                <option value="all" @if(request('category') === 'all' || !request('category')) selected @endif>Semua Kategori</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}" @if(request('category') === $cat) selected @endif>{{ $cat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Urutkan:</label>
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="newest" @if(request('sort') === 'newest' || !request('sort')) selected @endif>Terbaru</option>
-                                <option value="popular" @if(request('sort') === 'popular') selected @endif>Paling Populer</option>
-                                <option value="rating" @if(request('sort') === 'rating') selected @endif>Rating Terbaik</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            @if(count($groups) > 0)
-            <div class="grid">
-                @foreach($groups as $group)
-                <div class="card">
-                    <div class="card-image" style="background-size: cover; background-position: center; background-image: url('{{ $group->photo_url }}');">
-                        @if(!$group->group_photo)
-                        {{ substr($group->group_name, 0, 1) }}
-                        @endif
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">{{ $group->group_name }}</h3>
-                        <p class="card-subtitle">{{ $group->category ?? 'General Group' }}</p>
-                        <p class="card-description" style="font-size: 13px; color: #666; margin: 10px 0;">{{ Str::limit($group->group_description, 100) }}</p>
-                        <p class="card-meta">📍 {{ $group->city }}, {{ $group->country }}</p>
-                        <p class="card-members">{{ $group->member_count }} members • ⭐ {{ number_format($group->average_rating, 1) }}</p>
-                        @if($group->is_newgroup)
-                        <span style="display: inline-block; background: #e74c3c; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px; margin-top: 8px;">NEW</span>
-                        @endif
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <a href="{{ route('group.detail', $group->id_group) }}" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600;">Lihat Detail</a>
-                            @if(Auth::check())
-                                @php
-                                    $isMember = $group->members()->where('id_member', Auth::user()->id_member)->exists();
-                                @endphp
-                                @if($isMember)
-                                    <form method="POST" action="{{ route('group.leave', $group->id_group) }}" style="flex: 1;">
-                                        @csrf
-                                        <button type="submit" style="width: 100%; padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer;">Keluar</button>
-                                    </form>
-                                @else
-                                    <form method="POST" action="{{ route('group.join', $group->id_group) }}" style="flex: 1;">
-                                        @csrf
-                                        <button type="submit" style="width: 100%; padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer;">Bergabung</button>
-                                    </form>
-                                @endif
-                            @else
-                                <button onclick="openLoginModal()" style="flex: 1; padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer;">Bergabung</button>
-                            @endif
-                        </div>
-                    </div>
+            <!-- Topics -->
+            @if($group->topics->count() > 0)
+            <div class="detail-section">
+                <h2>Topik</h2>
+                <div class="topic-list">
+                    @foreach($group->topics as $topic)
+                        <span class="topic-tag">{{ $topic->topic_name }}</span>
+                    @endforeach
                 </div>
+            </div>
+            @endif
+
+            <!-- Events -->
+            @if($group->events->count() > 0)
+            <div class="detail-section">
+                <h2>Event Mendatang ({{ $group->events->count() }})</h2>
+                <div class="events-list">
+                    @foreach($group->events->take(5) as $event)
+                        <div class="event-item" onclick="window.location.href='{{ route('event.detail', $event->id_event) }}'">
+                            <div class="event-title">{{ $event->event_title }}</div>
+                            <div class="event-date">📅 {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y H:i') }}</div>
+                            <div class="event-date">{{ $event->total_rsvps }} going</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+
+        <!-- Members Section -->
+        @if($group->members->count() > 0)
+        <div class="detail-section">
+            <h2>Anggota ({{ $group->members->count() }})</h2>
+            <div class="member-list">
+                @foreach($group->members->take(12) as $member)
+                    <div class="member-item">
+                        <div class="member-avatar">{{ substr($member->member_name, 0, 1) }}</div>
+                        <div class="member-name">{{ $member->member_name }}</div>
+                    </div>
                 @endforeach
             </div>
-
-            <!-- Pagination -->
-            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
-                {{ $groups->links() }}
-            </div>
-            @else
-            <p style="text-align: center; padding: 40px 0;">No groups found.</p>
-            @endif
-        </section>
+        </div>
+        @endif
     </div>
 
     <!-- Footer -->

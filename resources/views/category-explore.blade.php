@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groups - Meetup</title>
+    <title>{{ ucfirst($category) }} Groups - Meetup</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="{{ asset('js/app.js') }}"></script>
@@ -182,6 +182,12 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 12px;
@@ -282,12 +288,14 @@
             margin-left: auto;
             margin-right: 30px;
         }
+
         .search-filter-container {
             background: #f8f9fa;
             padding: 25px;
             border-radius: 8px;
             margin-bottom: 30px;
         }
+
         .search-box {
             display: flex;
             gap: 15px;
@@ -295,6 +303,7 @@
             flex-wrap: wrap;
             align-items: center;
         }
+
         .search-box input {
             flex: 1;
             min-width: 200px;
@@ -303,6 +312,7 @@
             border-radius: 6px;
             font-size: 14px;
         }
+
         .search-box button {
             padding: 10px 20px;
             background: #667eea;
@@ -313,36 +323,20 @@
             font-weight: 600;
             transition: background 0.3s;
         }
+
         .search-box button:hover {
             background: #764ba2;
         }
-        .filter-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .filter-group label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-        .filter-group select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            background: white;
-        }
-        .filter-group select:focus {
-            outline: none;
-            border-color: #667eea;
+
+        @media (max-width: 768px) {
+            .navbar-categories {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .modal-content {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
@@ -541,35 +535,15 @@
     <div class="container">
         <section class="section">
             <div class="section-header">
-                <h1 class="section-title">Groups</h1>
-                <p class="section-subtitle">Join groups and find your community</p>
+                <h1 class="section-title">{{ ucfirst($category) }} Groups</h1>
+                <p class="section-subtitle">Join groups in the {{ ucfirst($category) }} category</p>
             </div>
 
-            <!-- Search and Filter -->
             <div class="search-filter-container">
-                <form method="GET" action="{{ route('groups') }}">
+                <form method="GET" action="{{ route('explore.category', $category) }}">
                     <div class="search-box">
                         <input type="text" name="search" placeholder="Cari grup..." value="{{ request('search') }}">
                         <button type="submit">Cari</button>
-                    </div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>Kategori:</label>
-                            <select name="category" onchange="this.form.submit()">
-                                <option value="all" @if(request('category') === 'all' || !request('category')) selected @endif>Semua Kategori</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}" @if(request('category') === $cat) selected @endif>{{ $cat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Urutkan:</label>
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="newest" @if(request('sort') === 'newest' || !request('sort')) selected @endif>Terbaru</option>
-                                <option value="popular" @if(request('sort') === 'popular') selected @endif>Paling Populer</option>
-                                <option value="rating" @if(request('sort') === 'rating') selected @endif>Rating Terbaik</option>
-                            </select>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -610,7 +584,7 @@
                                     </form>
                                 @endif
                             @else
-                                <button onclick="openLoginModal()" style="flex: 1; padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer;">Bergabung</button>
+                                <a href="{{ route('auth.login') }}" style="flex: 1; padding: 8px 12px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600;">Bergabung</a>
                             @endif
                         </div>
                     </div>
@@ -619,11 +593,11 @@
             </div>
 
             <!-- Pagination -->
-            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
+            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
                 {{ $groups->links() }}
             </div>
             @else
-            <p style="text-align: center; padding: 40px 0;">No groups found.</p>
+            <p style="text-align: center; padding: 40px 0;">No groups found in {{ $category }} category.</p>
             @endif
         </section>
     </div>

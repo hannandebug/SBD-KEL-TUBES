@@ -32,8 +32,10 @@
             <h1>Join your people</h1>
             <p>Find and meet local groups interested in the things you care about</p>
             <div class="hero-search">
-                <input type="text" placeholder="Search for a topic, group, or event">
-                <button>Search</button>
+                <form method="GET" action="{{ route('groups') }}" id="heroSearchForm" style="display: flex; width: 100%; gap: 10px;">
+                    <input type="text" name="search" placeholder="Search for a topic, group, or event" style="flex: 1;">
+                    <button type="submit">Search</button>
+                </form>
             </div>
         </div>
     </section>
@@ -48,17 +50,31 @@
             </div>
             <div class="grid">
                 @forelse($featuredGroups as $group)
-                <div class="card">
-                    <div class="card-image" style="background-size: cover; background-position: center; background-image: url('{{ $group->photo_url }}');">
-                        @if(!$group->group_photo)
-                        {{ substr($group->group_name, 0, 1) }}
+                <div class="featured-group-card">
+                    <a href="{{ route('group.detail', ['id' => $group->id_group]) }}" style="text-decoration: none; color: inherit;">
+                        <div class="card">
+                            <div class="card-image" style="background-size: cover; background-position: center; background-image: url('{{ $group->photo_url }}');">
+                                @if(!$group->group_photo)
+                                {{ substr($group->group_name, 0, 1) }}
+                                @endif
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">{{ $group->group_name }}</h3>
+                                <p class="card-subtitle">{{ $group->category ?? 'General Group' }}</p>
+                                <p class="card-meta">📍 {{ $group->city }}, {{ $group->country }}</p>
+                                <p class="card-members">{{ $group->member_count }} members • ⭐ {{ number_format($group->average_rating, 1) }}</p>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="card-overlay">
+                        @if(Auth::check())
+                        <form action="{{ route('group.join', ['id' => $group->id_group]) }}" method="POST" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn-join">Join Group</button>
+                        </form>
+                        @else
+                        <button type="button" class="btn-join" onclick="openLoginModal()">Login to Join</button>
                         @endif
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">{{ $group->group_name }}</h3>
-                        <p class="card-subtitle">{{ $group->category ?? 'General Group' }}</p>
-                        <p class="card-meta">📍 {{ $group->city }}, {{ $group->country }}</p>
-                        <p class="card-members">{{ $group->member_count }} members • ⭐ {{ number_format($group->average_rating, 1) }}</p>
                     </div>
                 </div>
                 @empty
@@ -78,20 +94,32 @@
             </div>
             <div class="grid" id="eventsGrid">
                 @forelse($upcomingEvents as $event)
-                <a href="{{ route('event.detail', ['id' => $event->id_event]) }}" style="text-decoration: none; color: inherit;">
-                    <div class="event-card" data-location="{{ $event->venue_name }}" data-country="{{ $event->venue_country }}" style="background-image: url('{{ $event->photo_url }}'); background-size: cover; background-position: center;">
-                        <div class="event-date">
-                            <div class="event-date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</div>
-                            <div class="event-date-month">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</div>
+                <div class="event-card-wrapper">
+                    <a href="{{ route('event.detail', ['id' => $event->id_event]) }}" style="text-decoration: none; color: inherit;">
+                        <div class="event-card" data-location="{{ $event->venue_name }}" data-country="{{ $event->venue_country }}" style="background-image: url('{{ $event->photo_url }}'); background-size: cover; background-position: center;">
+                            <div class="event-date">
+                                <div class="event-date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</div>
+                                <div class="event-date-month">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</div>
+                            </div>
+                            <div class="event-content">
+                                <h3 class="event-title">{{ $event->event_title }}</h3>
+                                <p class="event-group">{{ $event->group->group_name ?? 'Event' }}</p>
+                                <p class="event-location">📍 {{ $event->venue_name }}</p>
+                                <p class="event-attendees">{{ $event->total_rsvps }} going</p>
+                            </div>
                         </div>
-                        <div class="event-content">
-                            <h3 class="event-title">{{ $event->event_title }}</h3>
-                            <p class="event-group">{{ $event->group->group_name ?? 'Event' }}</p>
-                            <p class="event-location">📍 {{ $event->venue_name }}</p>
-                            <p class="event-attendees">{{ $event->total_rsvps }} going</p>
-                        </div>
+                    </a>
+                    <div class="card-overlay">
+                        @if(Auth::check())
+                        <form action="{{ route('event.rsvp', ['id' => $event->id_event]) }}" method="POST" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn-join">RSVP</button>
+                        </form>
+                        @else
+                        <button type="button" class="btn-join" onclick="openLoginModal()">Login to RSVP</button>
+                        @endif
                     </div>
-                </a>
+                </div>
                 @empty
                 <p>No upcoming events at the moment.</p>
                 @endforelse
@@ -108,54 +136,78 @@
                 <p class="section-subtitle">Find your community based on interests</p>
             </div>
             <div class="grid-2">
-                <div class="category-item">
-                    <div class="category-icon">💻</div>
-                    <p class="category-name">Technology</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🎨</div>
-                    <p class="category-name">Arts & Design</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">⚽</div>
-                    <p class="category-name">Sports & Fitness</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🍔</div>
-                    <p class="category-name">Food & Drink</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">📚</div>
-                    <p class="category-name">Learning</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🎬</div>
-                    <p class="category-name">Entertainment</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">💼</div>
-                    <p class="category-name">Business</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">❤️</div>
-                    <p class="category-name">Wellness</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🌍</div>
-                    <p class="category-name">Travel & Culture</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🚗</div>
-                    <p class="category-name">Hobbies</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">👨‍👩‍👧‍👦</div>
-                    <p class="category-name">Families</p>
-                </div>
-                <div class="category-item">
-                    <div class="category-icon">🌟</div>
-                    <p class="category-name">More Groups</p>
-                </div>
+                <a href="{{ route('explore.category', 'Technology') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">💻</div>
+                        <p class="category-name">Technology</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Arts & Design') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🎨</div>
+                        <p class="category-name">Arts & Design</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Sports & Fitness') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">⚽</div>
+                        <p class="category-name">Sports & Fitness</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Food & Drink') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🍔</div>
+                        <p class="category-name">Food & Drink</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Learning') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">📚</div>
+                        <p class="category-name">Learning</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Entertainment') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🎬</div>
+                        <p class="category-name">Entertainment</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Business') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">💼</div>
+                        <p class="category-name">Business</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Wellness') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">❤️</div>
+                        <p class="category-name">Wellness</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Travel & Culture') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🌍</div>
+                        <p class="category-name">Travel & Culture</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Hobbies') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🚗</div>
+                        <p class="category-name">Hobbies</p>
+                    </div>
+                </a>
+                <a href="{{ route('explore.category', 'Families') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">👨‍👩‍👧‍👦</div>
+                        <p class="category-name">Families</p>
+                    </div>
+                </a>
+                <a href="{{ route('groups') }}" style="text-decoration: none; color: inherit;">
+                    <div class="category-item">
+                        <div class="category-icon">🌟</div>
+                        <p class="category-name">More Groups</p>
+                    </div>
+                </a>
             </div>
         </section>
         

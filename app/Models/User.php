@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -18,6 +19,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id_member';
     public $incrementing = false;
     protected $keyType = 'bigint';
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +35,7 @@ class User extends Authenticatable
         'member_gr_count',
         'member_ev_count',
         'created_at',
+        'updated_at',
         'name',
         'email',
         'password',

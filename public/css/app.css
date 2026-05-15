@@ -704,6 +704,52 @@
             text-decoration: underline;
         }
         
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .pagination li {
+            display: inline-block;
+        }
+        
+        .pagination a,
+        .pagination span {
+            display: inline-block;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .pagination span.active,
+        .pagination span.page-item.active span {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .pagination span.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
         /* Blur effect when modal is open */
         body.modal-open {
             overflow: hidden;
@@ -719,6 +765,80 @@
         body.modal-open > section,
         body.modal-open > div > section {
             filter: blur(5px);
+        }
+        
+        /* Card Overlay for Join/RSVP Actions */
+        .featured-group-card,
+        .event-card-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .featured-group-card > a,
+        .event-card-wrapper > a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .featured-group-card .card,
+        .event-card-wrapper .event-card {
+            height: 100%;
+        }
+        
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            border-radius: 8px;
+        }
+        
+        .featured-group-card:hover .card-overlay,
+        .event-card-wrapper:hover .card-overlay {
+            opacity: 1;
+        }
+        
+        .join-form,
+        .rsvp-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-join,
+        .btn-rsvp {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-join:hover,
+        .btn-rsvp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+        }
+        
+        .btn-join:active,
+        .btn-rsvp:active {
+            transform: translateY(0);
         }
         
         /* Responsive */
