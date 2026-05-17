@@ -222,6 +222,8 @@
         .category-dropdown {
             position: relative;
             display: inline-block;
+            padding-bottom: 20px;
+            margin-bottom: -20px;
         }
 
         .category-dropdown-btn {
@@ -245,7 +247,8 @@
         }
 
         .category-dropdown-content {
-            display: none;
+            opacity: 0;
+            visibility: hidden;
             position: absolute;
             background-color: white;
             min-width: 200px;
@@ -272,8 +275,11 @@
             padding-left: 20px;
         }
 
-        .category-dropdown:hover .category-dropdown-content {
-            display: block;
+        .category-dropdown:hover .category-dropdown-content,
+        .category-dropdown.active .category-dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .navbar-categories {
@@ -355,32 +361,46 @@
                 <li><a href="{{ route('groups') }}">Groups</a></li>
                 <li><a href="{{ route('events') }}">Events</a></li>
                 <li><a href="{{ route('reviews') }}">Reviews</a></li>
+                @if(Auth::check())
+                <li><a href="{{ route('my.groups') }}" style="color: #e74c3c; font-weight: 700;">My Groups</a></li>
+                <li><a href="{{ route('my.events') }}" style="color: #e74c3c; font-weight: 700;">My Events</a></li>
+                @endif
             </ul>
-            <div class="navbar-categories">
-                <div class="category-dropdown">
-                    <button class="category-dropdown-btn">
-                        <i class="fas fa-th"></i> Categories
-                    </button>
-                    <div class="category-dropdown-content">
-                        @forelse($categories as $cat)
-                            <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
-                        @empty
-                            <a href="#">No categories</a>
-                        @endforelse
+            <div class="header-right">
+                <div class="navbar-categories">
+                    <div class="category-dropdown">
+                        <button class="category-dropdown-btn">
+                            <i class="fas fa-th"></i> Categories
+                        </button>
+                        <div class="category-dropdown-content">
+                            @forelse($categories as $cat)
+                                <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
+                            @empty
+                                <a href="#">No categories</a>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-buttons">
-                @if(Auth::check())
-                    <span style="margin-right: 15px; color: #333;">{{ Auth::user()->member_name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
-                    </form>
-                @else
-                    <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
-                    <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
-                @endif
+                <div class="header-buttons">
+                    @if(Auth::check())
+                        <a href="{{ route('profile') }}" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                {{ substr(Auth::user()->member_name, 0, 1) }}
+                            </span>
+                            {{ Auth::user()->member_name }}
+                        </a>
+                        @if(Auth::user()->member_email == 'admin@meetup.com')
+                            <a href="{{ route('admin.index') }}" style="margin-right: 10px; padding: 8px 16px; background: #f39c12; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">Admin</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
+                        </form>
+                    @else
+                        <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
+                        <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
@@ -540,9 +560,18 @@
     <!-- Main Content -->
     <div class="container">
         <section class="section">
-            <div class="section-header">
-                <h1 class="section-title">Events</h1>
-                <p class="section-subtitle">Find and join events happening near you</p>
+            <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h1 class="section-title">Events</h1>
+                    <p class="section-subtitle">Find and join events happening near you</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    @if(Auth::check())
+                        <a href="{{ route('event.create') }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+                            <span style="font-size: 18px; font-weight: 700;">+</span> New Event
+                        </a>
+                    @endif
+                </div>
             </div>
 
             <!-- Search and Filter -->
@@ -553,6 +582,22 @@
                         <button type="submit">Cari</button>
                     </div>
                     <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Tipe:</label>
+                            <select name="type" onchange="this.form.submit()">
+                                <option value="all" @if(request('type') === 'all' || !request('type')) selected @endif>Any Type</option>
+                                <option value="online" @if(request('type') === 'online') selected @endif>Online</option>
+                                <option value="in_person" @if(request('type') === 'in_person') selected @endif>In Person</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Kota:</label>
+                            <input type="text" name="city" placeholder="Cari kota..." value="{{ request('city') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 150px;">
+                        </div>
+                        <div class="filter-group">
+                            <label>Negara:</label>
+                            <input type="text" name="country" placeholder="Cari negara..." value="{{ request('country') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 150px;">
+                        </div>
                         <div class="filter-group">
                             <label>Kategori:</label>
                             <select name="category" onchange="this.form.submit()">
@@ -570,6 +615,15 @@
                                 <option value="oldest" @if(request('sort') === 'oldest') selected @endif>Paling Lama</option>
                             </select>
                         </div>
+                        @if(Auth::check())
+                        <div class="filter-group" style="margin-left: auto;">
+                            <label>Filter:</label>
+                            <select name="filter" onchange="this.form.submit()">
+                                <option value="all" @if(request('filter') !== 'joined') selected @endif>All Events</option>
+                                <option value="joined" @if(request('filter') === 'joined') selected @endif>Joined</option>
+                            </select>
+                        </div>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -588,13 +642,19 @@
                         <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #333;">{{ $event->event_title }}</h3>
                         <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">{{ $event->group->group_name ?? 'Event' }}</p>
                         <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">📍 {{ $event->venue_name }}, {{ $event->venue_city }}, {{ $event->venue_country }}</p>
-                        <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">Type: {{ $event->event_type }}</p>
+                        <p style="margin: 0 0 5px 0; font-size: 14px;">
+                            @if($event->event_type == 'online')
+                                <span style="display:inline-block;background:#3498db;color:white;padding:2px 8px;border-radius:3px;font-size:12px;">🌐 Online</span>
+                            @else
+                                <span style="display:inline-block;background:#27ae60;color:white;padding:2px 8px;border-radius:3px;font-size:12px;">📍 In Person</span>
+                            @endif
+                        </p>
                         <p style="margin: 0 0 15px 0; color: #e74c3c; font-size: 14px; font-weight: 500;">{{ $event->total_rsvps }} people going</p>
                         <div style="display: flex; gap: 10px; margin-top: auto;">
                             <a href="{{ route('event.detail', $event->id_event) }}" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600;">Lihat Detail</a>
                             @if(Auth::check())
                                 @php
-                                    $isAttending = $event->attendees()->where('id_member', Auth::user()->id_member)->exists();
+                                    $isAttending = $event->attendees()->where('users.id_member', Auth::user()->id_member)->exists();
                                 @endphp
                                 @if($isAttending)
                                     <form method="POST" action="{{ route('event.cancel-rsvp', $event->id_event) }}" style="flex: 1;">
@@ -616,10 +676,7 @@
                 @endforeach
             </div>
 
-            <!-- Pagination -->
-            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                {{ $events->links() }}
-            </div>
+            {{ $events->links('vendor.pagination.meetup') }}
             @else
             <p style="text-align: center; padding: 40px 0;">No events found.</p>
             @endif

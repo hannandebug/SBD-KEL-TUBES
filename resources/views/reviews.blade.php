@@ -222,6 +222,8 @@
         .category-dropdown {
             position: relative;
             display: inline-block;
+            padding-bottom: 20px;
+            margin-bottom: -20px;
         }
 
         .category-dropdown-btn {
@@ -245,7 +247,8 @@
         }
 
         .category-dropdown-content {
-            display: none;
+            opacity: 0;
+            visibility: hidden;
             position: absolute;
             background-color: white;
             min-width: 200px;
@@ -272,8 +275,11 @@
             padding-left: 20px;
         }
 
-        .category-dropdown:hover .category-dropdown-content {
-            display: block;
+        .category-dropdown:hover .category-dropdown-content,
+        .category-dropdown.active .category-dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .navbar-categories {
@@ -293,35 +299,49 @@
                 <li><a href="{{ route('groups') }}">Groups</a></li>
                 <li><a href="{{ route('events') }}">Events</a></li>
                 <li><a href="{{ route('reviews') }}">Reviews</a></li>
+                @if(Auth::check())
+                <li><a href="{{ route('my.groups') }}" style="color: #e74c3c; font-weight: 700;">My Groups</a></li>
+                <li><a href="{{ route('my.events') }}" style="color: #e74c3c; font-weight: 700;">My Events</a></li>
+                @endif
             </ul>
-            <div class="navbar-categories">
-                <div class="category-dropdown">
-                    <button class="category-dropdown-btn">
-                        <i class="fas fa-th"></i> Categories
-                    </button>
-                    <div class="category-dropdown-content">
-                        @php
-                            $categories = \App\Models\Group::distinct('category')->pluck('category')->filter()->values();
-                        @endphp
-                        @forelse($categories as $cat)
-                            <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
-                        @empty
-                            <a href="#">No categories</a>
-                        @endforelse
+            <div class="header-right">
+                <div class="navbar-categories">
+                    <div class="category-dropdown">
+                        <button class="category-dropdown-btn">
+                            <i class="fas fa-th"></i> Categories
+                        </button>
+                        <div class="category-dropdown-content">
+                            @php
+                                $categories = \App\Models\Group::distinct('category')->pluck('category')->filter()->values();
+                            @endphp
+                            @forelse($categories as $cat)
+                                <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
+                            @empty
+                                <a href="#">No categories</a>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-buttons">
-                @if(Auth::check())
-                    <span style="margin-right: 15px; color: #333;">{{ Auth::user()->member_name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
-                    </form>
-                @else
-                    <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
-                    <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
-                @endif
+                <div class="header-buttons">
+                    @if(Auth::check())
+                        <a href="{{ route('profile') }}" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                {{ substr(Auth::user()->member_name, 0, 1) }}
+                            </span>
+                            {{ Auth::user()->member_name }}
+                        </a>
+                        @if(Auth::user()->member_email == 'admin@meetup.com')
+                            <a href="{{ route('admin.index') }}" style="margin-right: 10px; padding: 8px 16px; background: #f39c12; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">Admin</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
+                        </form>
+                    @else
+                        <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
+                        <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
@@ -486,6 +506,38 @@
                 <p class="section-subtitle">See what people think about groups and events</p>
             </div>
 
+            @if(session('success'))
+                <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px;">{{ session('success') }}</div>
+            @endif
+
+            @if(Auth::check())
+            <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Tulis Review</h3>
+                <form method="POST" action="{{ route('review.store') }}">
+                    @csrf
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Rating</label>
+                        <select name="rating_given" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Komentar</label>
+                        <textarea name="review_text" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;" placeholder="Tulis review Anda..."></textarea>
+                    </div>
+                    <button type="submit" style="padding: 10px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Kirim Review</button>
+                </form>
+            </div>
+            @else
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+                <p style="color: #666;">Silakan <a href="{{ route('auth.login') }}" style="color: #667eea; font-weight: 600;">login</a> untuk menulis review.</p>
+            </div>
+            @endif
+
             @if(count($reviews) > 0)
             <div style="display: grid; gap: 20px;">
                 @foreach($reviews as $review)
@@ -527,17 +579,20 @@
                     </p>
                     @endif
 
+                    @if($review->review_text)
                     <p style="margin: 0; color: #333; font-size: 14px; line-height: 1.6;">
-                        {{ $review->event->event_description ?? $review->group->group_description ?? 'Great experience!' }}
+                        {{ $review->review_text }}
                     </p>
+                    @else
+                    <p style="margin: 0; color: #999; font-size: 13px; font-style: italic;">
+                        No comment provided.
+                    </p>
+                    @endif
                 </div>
                 @endforeach
             </div>
 
-            <!-- Pagination -->
-            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
-                {{ $reviews->links() }}
-            </div>
+            {{ $reviews->links('vendor.pagination.meetup') }}
             @else
             <p style="text-align: center; padding: 40px 0;">No reviews found.</p>
             @endif

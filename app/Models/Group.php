@@ -39,8 +39,7 @@ class Group extends Model
         if ($this->group_photo) {
             return $this->group_photo;
         }
-        // Fallback to placeholder
-        return 'https://via.placeholder.com/400x300?text=' . urlencode($this->group_name ?? 'Group');
+        return 'https://secure.meetupstatic.com/next/images/fallbacks/redesign/group-cover-4-wide.webp?w=1200';
     }
 
     /**

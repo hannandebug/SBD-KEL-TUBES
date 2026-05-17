@@ -22,12 +22,10 @@
         }
         
         .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            padding-right: 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            position: relative;
         }
         
         .logo {
@@ -35,12 +33,17 @@
             font-weight: 900;
             color: #e74c3c;
             text-decoration: none;
+            flex-shrink: 0;
         }
         
         .header-nav {
             display: flex;
             gap: 30px;
             list-style: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
         }
         
         .header-nav a {
@@ -58,6 +61,85 @@
         .header-buttons {
             display: flex;
             gap: 15px;
+        }
+        
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .category-dropdown {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 20px;
+            margin-bottom: -20px;
+        }
+        
+        .category-dropdown-btn {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .category-dropdown-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .category-dropdown-content {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 12px 0;
+            z-index: 1000;
+            border-radius: 6px;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+            transform: translateY(-5px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        }
+        
+        .category-dropdown:hover .category-dropdown-content,
+        .category-dropdown.active .category-dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .category-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .category-dropdown-content a:hover {
+            background-color: #f0f0f0;
+            padding-left: 20px;
+        }
+        
+        .navbar-categories {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+            margin-right: 30px;
         }
         
         .btn {
@@ -750,6 +832,81 @@
             cursor: not-allowed;
         }
         
+        /* Meetup Pagination */
+        .meetup-pagination {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .meetup-pagination ul {
+            display: flex;
+            gap: 6px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .meetup-pagination li { display: inline-block; }
+        .meetup-pagination a.page-num,
+        .meetup-pagination span.page-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #555;
+            background: #f0f0f0;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .meetup-pagination a.page-num:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .meetup-pagination li.active span.page-num {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .meetup-pagination a.prev-next,
+        .meetup-pagination span.prev-next {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #555;
+            background: #f0f0f0;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .meetup-pagination a.prev-next:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .meetup-pagination li.disabled span.prev-next,
+        .meetup-pagination li.disabled span.dots,
+        .meetup-pagination li.disabled span.page-num {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
         /* Blur effect when modal is open */
         body.modal-open {
             overflow: hidden;
@@ -796,6 +953,8 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.65);
             display: flex;
+            flex-direction: column;
+            gap: 12px;
             align-items: center;
             justify-content: center;
             opacity: 0;
@@ -839,6 +998,25 @@
         .btn-join:active,
         .btn-rsvp:active {
             transform: translateY(0);
+        }
+
+        .btn-detail {
+            padding: 8px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-detail:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            transform: translateY(-2px);
         }
         
         /* Responsive */

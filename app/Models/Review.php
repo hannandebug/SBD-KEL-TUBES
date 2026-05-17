@@ -22,6 +22,7 @@ class Review extends Model
         'id_event',
         'id_group',
         'rating_given',
+        'review_text',
         'created_at',
     ];
 

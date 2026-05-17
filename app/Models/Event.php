@@ -46,8 +46,7 @@ class Event extends Model
         if ($this->event_photo) {
             return $this->event_photo;
         }
-        // Fallback to placeholder
-        return 'https://via.placeholder.com/400x300?text=' . urlencode($this->event_title ?? 'Event');
+        return 'https://secure.meetupstatic.com/next/images/fallbacks/redesign/event-cover-1.webp?w=828';
     }
 
     /**

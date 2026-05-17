@@ -143,7 +143,28 @@ function logoutUser() {
     }
 }
 
-// Initialize header on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateHeader();
+// Header is rendered server-side via Blade — no JS overwrite needed
+
+// Category dropdown click toggle — works with scroll & prevents hover flicker
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.category-dropdown-btn');
+    if (btn) {
+        e.stopPropagation();
+        var dd = btn.closest('.category-dropdown');
+        var open = dd.classList.contains('active');
+
+        document.querySelectorAll('.category-dropdown.active').forEach(function(d) {
+            d.classList.remove('active');
+        });
+
+        if (!open) dd.classList.add('active');
+        return;
+    }
+
+    var dd = e.target.closest('.category-dropdown-content');
+    if (!dd) {
+        document.querySelectorAll('.category-dropdown.active').forEach(function(d) {
+            d.classList.remove('active');
+        });
+    }
 });

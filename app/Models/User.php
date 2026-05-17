@@ -51,6 +51,16 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function getPhotoUrlAttribute()
+    {
+        return 'https://via.placeholder.com/150?text=' . urlencode(substr($this->member_name ?? 'U', 0, 1));
+    }
+
+    public function getAvatarAttribute()
+    {
+        return substr($this->member_name ?? 'U', 0, 1);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

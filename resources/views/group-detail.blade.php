@@ -222,6 +222,8 @@
         .category-dropdown {
             position: relative;
             display: inline-block;
+            padding-bottom: 20px;
+            margin-bottom: -20px;
         }
 
         .category-dropdown-btn {
@@ -245,7 +247,8 @@
         }
 
         .category-dropdown-content {
-            display: none;
+            opacity: 0;
+            visibility: hidden;
             position: absolute;
             background-color: white;
             min-width: 200px;
@@ -272,8 +275,11 @@
             padding-left: 20px;
         }
 
-        .category-dropdown:hover .category-dropdown-content {
-            display: block;
+        .category-dropdown:hover .category-dropdown-content,
+        .category-dropdown.active .category-dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .navbar-categories {
@@ -326,6 +332,7 @@
             font-weight: 600;
             font-size: 14px;
             transition: all 0.3s;
+            text-decoration: none;
         }
         .btn-primary {
             background: white;
@@ -372,6 +379,24 @@
             border-radius: 20px;
             font-size: 13px;
             color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .topic-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+        .member-section {
+            margin-bottom: 20px;
+        }
+        .member-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .member-list {
             display: grid;
@@ -380,6 +405,9 @@
         }
         .member-item {
             text-align: center;
+        }
+        .member-item a {
+            text-decoration: none;
         }
         .member-avatar {
             width: 60px;
@@ -392,11 +420,42 @@
             color: white;
             font-weight: bold;
             margin: 0 auto 8px;
+            font-size: 20px;
         }
         .member-name {
             font-size: 12px;
             color: #333;
             word-break: break-word;
+        }
+        .organizer-badge {
+            display: inline-block;
+            background: #f39c12;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .coorganizer-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .eventorg-badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 4px;
         }
         .events-list {
             display: grid;
@@ -422,6 +481,89 @@
             font-size: 13px;
             color: #666;
         }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .photo-item {
+            width: 100%;
+            height: 150px;
+            border-radius: 6px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #e0e0e0;
+        }
+        .review-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .review-author {
+            font-weight: 600;
+            color: #333;
+        }
+        .review-date {
+            font-size: 12px;
+            color: #999;
+        }
+        .review-stars {
+            color: #f39c12;
+        }
+        .review-text {
+            color: #666;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .review-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .review-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .review-form select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .btn-outline {
+            padding: 8px 16px;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -433,32 +575,46 @@
                 <li><a href="{{ route('groups') }}">Groups</a></li>
                 <li><a href="{{ route('events') }}">Events</a></li>
                 <li><a href="{{ route('reviews') }}">Reviews</a></li>
+                @if(Auth::check())
+                <li><a href="{{ route('my.groups') }}" style="color: #e74c3c; font-weight: 700;">My Groups</a></li>
+                <li><a href="{{ route('my.events') }}" style="color: #e74c3c; font-weight: 700;">My Events</a></li>
+                @endif
             </ul>
-            <div class="navbar-categories">
-                <div class="category-dropdown">
-                    <button class="category-dropdown-btn">
-                        <i class="fas fa-th"></i> Categories
-                    </button>
-                    <div class="category-dropdown-content">
-                        @forelse($categories as $cat)
-                            <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
-                        @empty
-                            <a href="#">No categories</a>
-                        @endforelse
+            <div class="header-right">
+                <div class="navbar-categories">
+                    <div class="category-dropdown">
+                        <button class="category-dropdown-btn">
+                            <i class="fas fa-th"></i> Categories
+                        </button>
+                        <div class="category-dropdown-content">
+                            @forelse($categories as $cat)
+                                <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
+                            @empty
+                                <a href="#">No categories</a>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-buttons">
-                @if(Auth::check())
-                    <span style="margin-right: 15px; color: #333;">{{ Auth::user()->member_name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
-                    </form>
-                @else
-                    <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
-                    <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
-                @endif
+                <div class="header-buttons">
+                    @if(Auth::check())
+                        <a href="{{ route('profile') }}" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                {{ substr(Auth::user()->member_name, 0, 1) }}
+                            </span>
+                            {{ Auth::user()->member_name }}
+                        </a>
+                        @if(Auth::user()->member_email == 'admin@meetup.com')
+                            <a href="{{ route('admin.index') }}" style="margin-right: 10px; padding: 8px 16px; background: #f39c12; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">Admin</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
+                        </form>
+                    @else
+                        <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
+                        <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
@@ -605,7 +761,7 @@
         window.onclick = function(event) {
             let loginModal = document.getElementById('loginModal');
             let registerModal = document.getElementById('registerModal');
-            
+
             if (event.target == loginModal) {
                 closeLoginModal();
             }
@@ -641,7 +797,7 @@
                             </form>
                         @endif
                     @else
-                        <a href="{{ route('auth.login') }}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">Bergabung</a>
+                        <button onclick="openLoginModal()" class="btn btn-primary" style="border: none; cursor: pointer;">Bergabung</button>
                     @endif
                 </div>
             </div>
@@ -650,16 +806,20 @@
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Messages -->
         @if(session('success'))
             <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                 {{ session('success') }}
             </div>
         @endif
 
-        <!-- Details Grid -->
+        @if(session('error'))
+            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="details-grid">
-            <!-- Description -->
+            <!-- About Group -->
             <div class="detail-section">
                 <h2>Tentang Grup</h2>
                 <p style="color: #666; line-height: 1.6;">{{ $group->group_description }}</p>
@@ -671,7 +831,7 @@
                 <h2>Topik</h2>
                 <div class="topic-list">
                     @foreach($group->topics as $topic)
-                        <span class="topic-tag">{{ $topic->topic_name }}</span>
+                        <a href="{{ route('search.topic', $topic->topic_name) }}" class="topic-tag">{{ $topic->topic_name }}</a>
                     @endforeach
                 </div>
             </div>
@@ -692,22 +852,157 @@
                 </div>
             </div>
             @endif
-        </div>
 
-        <!-- Members Section -->
-        @if($group->members->count() > 0)
-        <div class="detail-section">
-            <h2>Anggota ({{ $group->members->count() }})</h2>
-            <div class="member-list">
-                @foreach($group->members->take(12) as $member)
-                    <div class="member-item">
-                        <div class="member-avatar">{{ substr($member->member_name, 0, 1) }}</div>
-                        <div class="member-name">{{ $member->member_name }}</div>
+            <!-- Members Section -->
+            <div class="detail-section full-width">
+                <h2>Anggota ({{ $group->members->count() }})</h2>
+
+                <!-- Organizer -->
+                @if($organizer)
+                <div class="member-section">
+                    <div class="member-section-title"><i class="fas fa-crown" style="color: #f39c12;"></i> Organizer</div>
+                    <div class="member-list">
+                        <div class="member-item">
+                            <a href="{{ route('profile.id', $organizer->id_member) }}">
+                                <div class="member-avatar" style="background: linear-gradient(135deg, #f39c12, #e67e22);">{{ substr($organizer->member_name, 0, 1) }}</div>
+                                <div class="member-name">{{ $organizer->member_name }}</div>
+                            </a>
+                            <div class="organizer-badge">Organizer</div>
+                        </div>
                     </div>
-                @endforeach
+                </div>
+                @endif
+
+                <!-- Co-Organizers -->
+                @if($coOrganizers->count() > 0)
+                <div class="member-section">
+                    <div class="member-section-title"><i class="fas fa-user-tie" style="color: #27ae60;"></i> Co-Organizers</div>
+                    <div class="member-list">
+                        @foreach($coOrganizers as $co)
+                        <div class="member-item">
+                            <a href="{{ route('profile.id', $co->id_member) }}">
+                                <div class="member-avatar" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">{{ substr($co->member_name, 0, 1) }}</div>
+                                <div class="member-name">{{ $co->member_name }}</div>
+                            </a>
+                            <div class="coorganizer-badge">Co-Organizer</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Event Organizers -->
+                @if($eventOrganizers->count() > 0)
+                <div class="member-section">
+                    <div class="member-section-title"><i class="fas fa-calendar-check" style="color: #3498db;"></i> Event Organizers</div>
+                    <div class="member-list">
+                        @foreach($eventOrganizers as $eo)
+                        <div class="member-item">
+                            <a href="{{ route('profile.id', $eo->id_member) }}">
+                                <div class="member-avatar" style="background: linear-gradient(135deg, #3498db, #2980b9);">{{ substr($eo->member_name, 0, 1) }}</div>
+                                <div class="member-name">{{ $eo->member_name }}</div>
+                            </a>
+                            <div class="eventorg-badge">Event Org.</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Members -->
+                @if($members->count() > 0)
+                <div class="member-section">
+                    <div class="member-section-title"><i class="fas fa-users" style="color: #667eea;"></i> Members</div>
+                    <div class="member-list">
+                        @foreach($members as $member)
+                        <div class="member-item">
+                            <a href="{{ route('profile.id', $member->id_member) }}">
+                                <div class="member-avatar">{{ substr($member->member_name, 0, 1) }}</div>
+                                <div class="member-name">{{ $member->member_name }}</div>
+                            </a>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            <!-- Album Section -->
+            @if(count($albumPhotos) > 0)
+            <div class="detail-section">
+                <h2>Album Foto</h2>
+                <div class="photo-grid">
+                    @foreach(array_slice($albumPhotos, 0, 6) as $photo)
+                        <div class="photo-item" style="background-image: url('{{ $photo }}');"></div>
+                    @endforeach
+                </div>
+                <a href="{{ route('group.album', $group->id_group) }}" class="btn-outline">Lihat Album Lengkap</a>
+            </div>
+            @endif
+
+            <!-- Reviews Section -->
+            <div class="detail-section">
+                <h2>Ulasan ({{ $reviews->count() }})</h2>
+
+                @if($reviews->count() > 0)
+                    @foreach($reviews as $review)
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div>
+                                <span class="review-author">{{ $review->member->member_name ?? 'Anonymous' }}</span>
+                                <span class="review-date"> • {{ \Carbon\Carbon::parse($review->created_at)->format('d M Y') }}</span>
+                            </div>
+                            <div class="review-stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= $review->rating_given)
+                                        <i class="fas fa-star"></i>
+                                    @else
+                                        <i class="far fa-star"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                        </div>
+                        <p class="review-text">{{ $review->review_text }}</p>
+                    </div>
+                    @endforeach
+                @else
+                    <p style="color: #999; font-size: 14px;">Belum ada ulasan untuk grup ini.</p>
+                @endif
+
+                @if(Auth::check())
+                <div class="review-form" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <h3 style="font-size: 16px; margin: 0 0 15px 0; color: #333;">Tulis Ulasan</h3>
+                    <form method="POST" action="{{ route('review.store') }}">
+                        @csrf
+                        <input type="hidden" name="id_group" value="{{ $group->id_group }}">
+
+                        <div class="form-group">
+                            <label for="rating_given">Rating</label>
+                            <select name="rating_given" id="rating_given" required style="padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; background: white; width: 100%; box-sizing: border-box;">
+                                <option value="">Pilih rating</option>
+                                <option value="1">1 - Sangat Buruk</option>
+                                <option value="2">2 - Buruk</option>
+                                <option value="3">3 - Cukup</option>
+                                <option value="4">4 - Baik</option>
+                                <option value="5">5 - Sangat Baik</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review_text">Ulasan</label>
+                            <textarea name="review_text" id="review_text" rows="4" required placeholder="Bagikan pengalaman Anda di grup ini..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Kirim Ulasan</button>
+                    </form>
+                </div>
+                @else
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+                    <p style="color: #999; font-size: 14px;">Silakan <a onclick="openLoginModal()" style="color: #667eea; text-decoration: none; font-weight: 600; cursor: pointer;">login</a> untuk memberikan ulasan.</p>
+                </div>
+                @endif
             </div>
         </div>
-        @endif
     </div>
 
     <!-- Footer -->

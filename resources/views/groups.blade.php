@@ -222,6 +222,8 @@
         .category-dropdown {
             position: relative;
             display: inline-block;
+            padding-bottom: 20px;
+            margin-bottom: -20px;
         }
 
         .category-dropdown-btn {
@@ -245,7 +247,8 @@
         }
 
         .category-dropdown-content {
-            display: none;
+            opacity: 0;
+            visibility: hidden;
             position: absolute;
             background-color: white;
             min-width: 200px;
@@ -272,8 +275,11 @@
             padding-left: 20px;
         }
 
-        .category-dropdown:hover .category-dropdown-content {
-            display: block;
+        .category-dropdown:hover .category-dropdown-content,
+        .category-dropdown.active .category-dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .navbar-categories {
@@ -355,32 +361,46 @@
                 <li><a href="{{ route('groups') }}">Groups</a></li>
                 <li><a href="{{ route('events') }}">Events</a></li>
                 <li><a href="{{ route('reviews') }}">Reviews</a></li>
+                @if(Auth::check())
+                <li><a href="{{ route('my.groups') }}" style="color: #e74c3c; font-weight: 700;">My Groups</a></li>
+                <li><a href="{{ route('my.events') }}" style="color: #e74c3c; font-weight: 700;">My Events</a></li>
+                @endif
             </ul>
-            <div class="navbar-categories">
-                <div class="category-dropdown">
-                    <button class="category-dropdown-btn">
-                        <i class="fas fa-th"></i> Categories
-                    </button>
-                    <div class="category-dropdown-content">
-                        @forelse($categories as $cat)
-                            <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
-                        @empty
-                            <a href="#">No categories</a>
-                        @endforelse
+            <div class="header-right">
+                <div class="navbar-categories">
+                    <div class="category-dropdown">
+                        <button class="category-dropdown-btn">
+                            <i class="fas fa-th"></i> Categories
+                        </button>
+                        <div class="category-dropdown-content">
+                            @forelse($categories as $cat)
+                                <a href="{{ route('explore.category', $cat) }}">{{ $cat }}</a>
+                            @empty
+                                <a href="#">No categories</a>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-buttons">
-                @if(Auth::check())
-                    <span style="margin-right: 15px; color: #333;">{{ Auth::user()->member_name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
-                    </form>
-                @else
-                    <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
-                    <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
-                @endif
+                <div class="header-buttons">
+                    @if(Auth::check())
+                        <a href="{{ route('profile') }}" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                {{ substr(Auth::user()->member_name, 0, 1) }}
+                            </span>
+                            {{ Auth::user()->member_name }}
+                        </a>
+                        @if(Auth::user()->member_email == 'admin@meetup.com')
+                            <a href="{{ route('admin.index') }}" style="margin-right: 10px; padding: 8px 16px; background: #f39c12; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">Admin</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Logout</button>
+                        </form>
+                    @else
+                        <button onclick="openLoginModal()" style="margin-right: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Login</button>
+                        <button onclick="openRegisterModal()" style="padding: 8px 16px; background: #764ba2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Register</button>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
@@ -540,9 +560,18 @@
     <!-- Main Content -->
     <div class="container">
         <section class="section">
-            <div class="section-header">
-                <h1 class="section-title">Groups</h1>
-                <p class="section-subtitle">Join groups and find your community</p>
+            <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h1 class="section-title">Groups</h1>
+                    <p class="section-subtitle">Join groups and find your community</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    @if(Auth::check())
+                        <a href="{{ route('group.create') }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+                            <span style="font-size: 18px; font-weight: 700;">+</span> New Group
+                        </a>
+                    @endif
+                </div>
             </div>
 
             <!-- Search and Filter -->
@@ -554,6 +583,14 @@
                     </div>
                     <div class="filter-row">
                         <div class="filter-group">
+                            <label>Kota:</label>
+                            <input type="text" name="city" placeholder="Cari kota..." value="{{ request('city') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 150px;">
+                        </div>
+                        <div class="filter-group">
+                            <label>Negara:</label>
+                            <input type="text" name="country" placeholder="Cari negara..." value="{{ request('country') }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 150px;">
+                        </div>
+                        <div class="filter-group">
                             <label>Kategori:</label>
                             <select name="category" onchange="this.form.submit()">
                                 <option value="all" @if(request('category') === 'all' || !request('category')) selected @endif>Semua Kategori</option>
@@ -562,14 +599,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="filter-group">
-                            <label>Urutkan:</label>
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="newest" @if(request('sort') === 'newest' || !request('sort')) selected @endif>Terbaru</option>
-                                <option value="popular" @if(request('sort') === 'popular') selected @endif>Paling Populer</option>
-                                <option value="rating" @if(request('sort') === 'rating') selected @endif>Rating Terbaik</option>
-                            </select>
-                        </div>
+                    <div class="filter-group">
+                        <label>Urutkan:</label>
+                        <select name="sort" onchange="this.form.submit()">
+                            <option value="newest" @if(request('sort') === 'newest' || !request('sort')) selected @endif>Terbaru</option>
+                            <option value="popular" @if(request('sort') === 'popular') selected @endif>Paling Populer</option>
+                            <option value="rating" @if(request('sort') === 'rating') selected @endif>Rating Terbaik</option>
+                        </select>
+                    </div>
+                    @if(Auth::check())
+                    <div class="filter-group" style="margin-left: auto;">
+                        <label>Filter:</label>
+                        <select name="filter" onchange="this.form.submit()">
+                            <option value="all" @if(request('filter') !== 'joined') selected @endif>All Groups</option>
+                            <option value="joined" @if(request('filter') === 'joined') selected @endif>Joined</option>
+                        </select>
+                    </div>
+                    @endif
                     </div>
                 </form>
             </div>
@@ -596,7 +642,7 @@
                             <a href="{{ route('group.detail', $group->id_group) }}" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600;">Lihat Detail</a>
                             @if(Auth::check())
                                 @php
-                                    $isMember = $group->members()->where('id_member', Auth::user()->id_member)->exists();
+                                    $isMember = $group->members()->where('users.id_member', Auth::user()->id_member)->exists();
                                 @endphp
                                 @if($isMember)
                                     <form method="POST" action="{{ route('group.leave', $group->id_group) }}" style="flex: 1;">
@@ -618,10 +664,7 @@
                 @endforeach
             </div>
 
-            <!-- Pagination -->
-            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
-                {{ $groups->links() }}
-            </div>
+            {{ $groups->links('vendor.pagination.meetup') }}
             @else
             <p style="text-align: center; padding: 40px 0;">No groups found.</p>
             @endif
